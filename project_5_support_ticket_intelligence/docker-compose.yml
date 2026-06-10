@@ -1,0 +1,27 @@
+# Docker Compose for local development
+#
+# Usage:
+#   docker compose up -d      ← start PostgreSQL in the background
+#   docker compose down        ← stop it
+#   docker compose down -v     ← stop AND delete all data (fresh start)
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: support_ai_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: support_ai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # persist data across restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:     # named volume — survives `docker compose down` but not `down -v`

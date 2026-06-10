@@ -1,0 +1,54 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model files (too large for git)
+*.pkl
+*.joblib
+*.h5
+*.h5.zip
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+**/models/distilbert_sentiment/
+
+# Data files (too large for git)
+*.csv
+*.parquet
+*.arrow
+*.pdf
+*.zip
+
+# Docker
+docker-compose.override.yml
+
+# uv / pip
+*.lock

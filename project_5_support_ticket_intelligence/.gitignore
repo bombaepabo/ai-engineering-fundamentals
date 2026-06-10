@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# Environment variables (secrets!)
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML model artifacts (too large for git)
+models/*.joblib
+
+# Data files (too large for git)
+data/tickets/*.csv
+
+# Alembic
+alembic/versions/__pycache__/
