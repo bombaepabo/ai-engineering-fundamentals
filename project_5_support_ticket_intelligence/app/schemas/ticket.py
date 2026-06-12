@@ -3,6 +3,9 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 
+from app.schemas.analysis import TicketAnalysisResponse
+
+
 class TicketBase(BaseModel):
     """Base schema sharing common fields for Ticket."""
     subject: str = Field(..., min_length=3, max_length=200, description="Subject of the support ticket")
@@ -20,6 +23,7 @@ class TicketResponse(TicketBase):
     status: str
     created_at: datetime
     updated_at: datetime
+    analyses: list[TicketAnalysisResponse] = []
 
     # Tell Pydantic to read data even if it is an ORM (SQLAlchemy model) instead of a dictionary
     model_config = ConfigDict(from_attributes=True)

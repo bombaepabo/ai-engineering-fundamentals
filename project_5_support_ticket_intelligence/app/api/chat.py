@@ -42,10 +42,10 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
         if source_title not in sources_list:
             sources_list.append(source_title)
 
-    def get_ticket_status(ticket_id: int) -> str:
+    def get_ticket_details(ticket_id: int) -> str:
         """
-        Retrieves the current status, category, priority, and AI summary 
-        for a customer's support ticket from the database.
+        Retrieves the full content and AI analysis details for a customer's support ticket from the database.
+        Includes subject, message, current status, category, priority, sentiment, summary, and suggested reply.
         
         Args:
             ticket_id: The integer ID of the ticket to look up.
@@ -55,15 +55,25 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
             if not ticket:
                 return f"Ticket #{ticket_id} was not found in our database."
                 
-            status_info = f"Ticket #{ticket_id} status is '{ticket.status}'."
+            details = (
+                f"Ticket #{ticket.id} Details:\n"
+                f"- Subject: {ticket.subject}\n"
+                f"- Status: {ticket.status}\n"
+                f"- Customer Message: {ticket.message}\n"
+            )
             if ticket.analyses:
                 analysis = ticket.analyses[0]
-                status_info += (
-                    f" It is classified as a '{analysis.category}' "
-                    f"with '{analysis.priority}' priority. "
-                    f"AI Summary: {analysis.summary}"
+                details += (
+                    f"- AI Analysis Metrics:\n"
+                    f"  * Category: {analysis.category}\n"
+                    f"  * Priority: {analysis.priority}\n"
+                    f"  * Sentiment: {analysis.sentiment}\n"
+                    f"  * AI Summary: {analysis.summary}\n"
+                    f"  * Suggested Reply: {analysis.suggested_reply}\n"
                 )
-            return status_info
+            else:
+                details += "- AI Analysis Metrics: Not analyzed yet."
+            return details
         except Exception as e:
             return f"Error querying ticket details: {str(e)}"
 
@@ -73,7 +83,7 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
         "Answer the user's questions politely and professionally. "
         "Base your responses on the following official policy context if applicable:\n"
         f"{context_text}\n"
-        "You also have access to the `get_ticket_status` tool to look up database details "
+        "You also have access to the `get_ticket_details` tool to look up database details "
         "for a specific ticket ID. If a user asks about a specific ticket number, "
         "always use the tool to retrieve the information. "
         "If you do not know the answer, politely ask them to wait for a human agent."
@@ -104,7 +114,7 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
         config=types.GenerateContentConfig(
             system_instruction=system_instruction,
             temperature=0.5,
-            tools=[get_ticket_status]
+            tools=[get_ticket_details]
         )
     )
     response_text = response.text

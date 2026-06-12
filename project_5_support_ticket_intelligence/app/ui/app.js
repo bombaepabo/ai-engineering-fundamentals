@@ -221,6 +221,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 month: "short", day: "numeric"
             });
 
+            let badgesHtml = "";
+            if (ticket.analyses && ticket.analyses.length > 0) {
+                const analysis = ticket.analyses[0];
+                badgesHtml = `
+                    <span class="badge priority-${analysis.priority.toLowerCase()}">${analysis.priority}</span>
+                    <span class="badge sentiment-${analysis.sentiment.toLowerCase()}">${analysis.sentiment}</span>
+                    <span class="badge category-tag">${analysis.category}</span>
+                `;
+            }
+
             li.innerHTML = `
                 <div class="ticket-item-top">
                     <span class="ticket-item-id">#${ticket.id}</span>
@@ -228,17 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <h3>${escapeHtml(ticket.subject)}</h3>
                 <div class="ticket-item-badges" id="badges-row-${ticket.id}">
-                    <!-- Loaded dynamically if analyzed -->
+                    ${badgesHtml}
                 </div>
             `;
             
             li.addEventListener("click", () => selectTicket(ticket));
             ticketListContainer.appendChild(li);
-            
-            // If ticket is already analyzed, fetch metadata to display badges
-            if (ticket.status === "analyzed") {
-                loadMiniAnalysisBadges(ticket.id);
-            }
         });
     }
 
