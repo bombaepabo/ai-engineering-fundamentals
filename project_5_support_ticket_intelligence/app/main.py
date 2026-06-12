@@ -20,6 +20,15 @@ async def lifespan(app: FastAPI):
     """
     Handles application startup and shutdown events.
     """
+    # Download models from GCS if configured and missing
+    try:
+        from app.services.model_downloader import download_models_from_gcs
+        download_models_from_gcs()
+    except Exception as e:
+        setup_logging()
+        import logging
+        logging.getLogger("app.api").warning(f"Model downloader failed to initialize: {e}")
+
     classifier.load_models()
     yield
 

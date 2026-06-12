@@ -41,6 +41,7 @@ class Settings(BaseSettings):
 
     # --- File Storage ---
     knowledge_base_path: str = "data/knowledge_base"  # local dev file storage
+    model_bucket_name: str | None = None  # GCS bucket name for ML models
 
     # --- Pydantic Settings config ---
     model_config = SettingsConfigDict(

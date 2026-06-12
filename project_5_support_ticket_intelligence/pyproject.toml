@@ -28,6 +28,9 @@ dependencies = [
     # --- LLM / Embeddings ---
     "google-genai>=1.0.0",
 
+    # --- Cloud Storage ---
+    "google-cloud-storage>=2.18.0",
+
     # --- Utilities ---
     "python-dotenv>=1.0.0",
 ]
