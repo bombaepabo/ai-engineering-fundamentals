@@ -1000,7 +1000,7 @@ wheels = [
 ]
 
 [[package]]
-name = "support-ai"
+name = "support-ticket-intelligence"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
