@@ -8,7 +8,7 @@ from app.config import settings
 
 from app.auth import verify_api_key
 from app.database import get_db
-from app.models import ChatLog
+from app.models import ChatLog, Ticket
 from app.schemas.chat import ChatMessageRequest, ChatMessageResponse
 from app.services.retriever import retriever_service
 from app.services.gemini_service import gemini_service
@@ -42,12 +42,40 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
         if source_title not in sources_list:
             sources_list.append(source_title)
 
+    def get_ticket_status(ticket_id: int) -> str:
+        """
+        Retrieves the current status, category, priority, and AI summary 
+        for a customer's support ticket from the database.
+        
+        Args:
+            ticket_id: The integer ID of the ticket to look up.
+        """
+        try:
+            ticket = db.query(Ticket).filter(Ticket.id == ticket_id).first()
+            if not ticket:
+                return f"Ticket #{ticket_id} was not found in our database."
+                
+            status_info = f"Ticket #{ticket_id} status is '{ticket.status}'."
+            if ticket.analyses:
+                analysis = ticket.analyses[0]
+                status_info += (
+                    f" It is classified as a '{analysis.category}' "
+                    f"with '{analysis.priority}' priority. "
+                    f"AI Summary: {analysis.summary}"
+                )
+            return status_info
+        except Exception as e:
+            return f"Error querying ticket details: {str(e)}"
+
     # 3. Format the chat prompt including history and RAG context
     system_instruction = (
         "You are an expert customer support agent assistant. "
         "Answer the user's questions politely and professionally. "
         "Base your responses on the following official policy context if applicable:\n"
         f"{context_text}\n"
+        "You also have access to the `get_ticket_status` tool to look up database details "
+        "for a specific ticket ID. If a user asks about a specific ticket number, "
+        "always use the tool to retrieve the information. "
         "If you do not know the answer, politely ask them to wait for a human agent."
     )
 
@@ -75,7 +103,8 @@ def chat_interaction(request: ChatMessageRequest, db: Session = Depends(get_db))
         contents=messages,
         config=types.GenerateContentConfig(
             system_instruction=system_instruction,
-            temperature=0.5
+            temperature=0.5,
+            tools=[get_ticket_status]
         )
     )
     response_text = response.text
