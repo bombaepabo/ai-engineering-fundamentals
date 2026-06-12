@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support AI · Ticket Intelligence Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow-orb glow-1"></div>
+    <div class="glow-orb glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <i class="fa-solid fa-microchip-ai logo-icon"></i>
+                <div class="brand-text">
+                    <h1>Support AI</h1>
+                    <span class="sub-brand">Ticket Intelligence Platform</span>
+                </div>
+            </div>
+            
+            <nav class="tab-nav">
+                <button class="nav-btn active" data-tab="tickets"><i class="fa-solid fa-ticket"></i> Tickets</button>
+                <button class="nav-btn" data-tab="knowledge"><i class="fa-solid fa-book-open"></i> Knowledge Base</button>
+                <button class="nav-btn" data-tab="chat"><i class="fa-solid fa-comments"></i> Chat Assistant</button>
+            </nav>
+
+            <div class="header-actions">
+                <div class="status-badge" id="api-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Checking API...</span>
+                </div>
+                <button class="icon-btn" id="settings-toggle" title="Settings"><i class="fa-solid fa-gear"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- TAB 1: TICKETS DASHBOARD -->
+            <section class="tab-content active" id="tab-tickets">
+                <div class="dashboard-grid">
+                    <!-- Ticket Queue Sidebar -->
+                    <aside class="sidebar-card">
+                        <div class="sidebar-header">
+                            <h2>Ticket Queue</h2>
+                            <button class="btn btn-sm btn-primary" id="new-ticket-btn">
+                                <i class="fa-solid fa-plus"></i> New Ticket
+                            </button>
+                        </div>
+                        <div class="ticket-list-wrapper">
+                            <ul class="ticket-list" id="ticket-list-container">
+                                <!-- Dynamic ticket items here -->
+                                <li class="ticket-item-empty">Loading tickets...</li>
+                            </ul>
+                        </div>
+                    </aside>
+
+                    <!-- Ticket Details and Analysis Workspace -->
+                    <article class="workspace-card" id="workspace-detail">
+                        <div class="workspace-placeholder" id="workspace-empty-state">
+                            <i class="fa-solid fa-envelope-open-text placeholder-icon"></i>
+                            <h3>Select a ticket from the queue</h3>
+                            <p>Choose a customer request to run ML classifications, view AI summaries, and generate draft replies.</p>
+                        </div>
+
+                        <div class="workspace-content hidden" id="ticket-details-pane">
+                            <!-- Ticket Header -->
+                            <div class="workspace-header">
+                                <div class="ticket-title-area">
+                                    <span class="ticket-id" id="detail-ticket-id">#123</span>
+                                    <h2 id="detail-ticket-subject">Subject loading...</h2>
+                                </div>
+                                <div class="ticket-status-actions">
+                                    <span class="badge" id="detail-ticket-status">Status</span>
+                                    <button class="btn btn-primary" id="analyze-btn">
+                                        <i class="fa-solid fa-brain"></i> Analyze Ticket
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Split Detail Grid -->
+                            <div class="ticket-grid">
+                                <!-- Left side: Customer message -->
+                                <div class="glass-subcard customer-message-card">
+                                    <div class="subcard-header">
+                                        <h3><i class="fa-solid fa-user-circle"></i> Customer Message</h3>
+                                        <span class="timestamp" id="detail-ticket-time">Time</span>
+                                    </div>
+                                    <div class="message-content" id="detail-ticket-message">Message text...</div>
+                                </div>
+
+                                <!-- Right side: AI Summary & Classifications -->
+                                <div class="glass-subcard ai-summary-card">
+                                    <div class="subcard-header">
+                                        <h3><i class="fa-solid fa-robot"></i> Intelligence Summary</h3>
+                                    </div>
+                                    <div class="ai-meta-grid">
+                                        <div class="meta-item">
+                                            <span class="meta-label">Category</span>
+                                            <span class="badge" id="ai-category">Pending</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Priority</span>
+                                            <span class="badge" id="ai-priority">Pending</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Sentiment</span>
+                                            <span class="badge" id="ai-sentiment">Pending</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <span class="meta-label">Confidence</span>
+                                            <span class="badge" id="ai-confidence">0.0</span>
+                                        </div>
+                                    </div>
+                                    <div class="summary-content" id="ai-summary-text">
+                                        <span class="muted-placeholder">Run Analysis to generate AI summary...</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Section: AI Suggested Reply -->
+                            <div class="glass-subcard suggested-reply-card">
+                                <div class="subcard-header">
+                                    <h3><i class="fa-solid fa-reply-all"></i> AI Draft Response</h3>
+                                    <div class="reply-actions">
+                                        <span class="analysis-method-badge" id="ai-method">mock</span>
+                                        <button class="btn btn-sm btn-secondary" id="copy-reply-btn" disabled>
+                                            <i class="fa-regular fa-copy"></i> Copy Reply
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="reply-box" id="ai-reply-text">
+                                    <span class="muted-placeholder">Suggested email response will appear here after analysis.</span>
+                                </div>
+                            </div>
+
+                            <!-- Knowledge Base References (RAG) -->
+                            <div class="glass-subcard sources-card">
+                                <div class="subcard-header">
+                                    <h3><i class="fa-solid fa-magnifying-glass-location"></i> Referenced Policies (RAG)</h3>
+                                </div>
+                                <div class="sources-list" id="ai-sources-container">
+                                    <span class="muted-placeholder">No articles referenced yet.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- TAB 2: KNOWLEDGE BASE -->
+            <section class="tab-content" id="tab-knowledge">
+                <div class="knowledge-grid">
+                    <!-- Left: Upload Article Form -->
+                    <div class="glass-card form-card">
+                        <h2>Upload Policy Article</h2>
+                        <form id="knowledge-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="article-title">Article Title</label>
+                                <input type="text" id="article-title" placeholder="e.g. Refund and Return Policy" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="article-url">Source URL (Optional)</label>
+                                <input type="url" id="article-url" placeholder="https://example.com/refunds">
+                            </div>
+                            <div class="form-group">
+                                <label for="article-content">Content Body</label>
+                                <textarea id="article-content" rows="10" placeholder="Paste the full text of the support documentation or refund policy here..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fa-solid fa-upload"></i> Publish & Vector Index
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Knowledge Base List -->
+                    <div class="glass-card list-card">
+                        <h2>Indexed Help Documents</h2>
+                        <div class="articles-table-wrapper">
+                            <table class="articles-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="articles-table-body">
+                                    <!-- Dynamic indexed files list -->
+                                    <tr>
+                                        <td colspan="5" class="table-empty">Loading documents...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: CHAT ASSISTANT -->
+            <section class="tab-content" id="tab-chat">
+                <div class="chat-container-card">
+                    <!-- Chat Sidebar (Sessions) -->
+                    <aside class="chat-sessions-sidebar">
+                        <h3>Conversations</h3>
+                        <div class="form-group session-input-group">
+                            <label for="chat-session-id">Session ID</label>
+                            <input type="text" id="chat-session-id" value="support-session-default">
+                        </div>
+                        <p class="session-help-text">Change the Session ID to start a new stateful conversation thread or retrieve past history.</p>
+                    </aside>
+
+                    <!-- Chat Box -->
+                    <div class="chat-box-area">
+                        <div class="chat-messages" id="chat-messages-container">
+                            <div class="msg msg-assistant">
+                                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                                <div class="msg-bubble">
+                                    Hello! I am your AI Support Assistant. Ask me any questions about our refund policy, billing queries, or account management.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Typing Indicator -->
+                        <div class="typing-indicator hidden" id="chat-typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="chat-input-field" placeholder="Ask a support question (e.g. How many days do I have to return an item?)...">
+                            <button class="btn btn-primary" id="chat-send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL 1: NEW TICKET FORM -->
+    <div class="modal-overlay hidden" id="ticket-modal">
+        <div class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Submit Support Ticket</h2>
+                <button class="close-btn" id="close-ticket-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="ticket-form" class="standard-form">
+                <div class="form-group">
+                    <label for="ticket-subject">Subject</label>
+                    <input type="text" id="ticket-subject" placeholder="Summarize the customer's issue (e.g., Billing discrepancy on invoice #10)" required>
+                </div>
+                <div class="form-group">
+                    <label for="ticket-message">Description / Email Body</label>
+                    <textarea id="ticket-message" rows="8" placeholder="Paste the customer's email description here..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-ticket-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SETTINGS DRAWER -->
+    <div class="modal-overlay hidden" id="settings-modal">
+        <div class="glass-card modal-card settings-card">
+            <div class="modal-header">
+                <h2>API Settings</h2>
+                <button class="close-btn" id="close-settings-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="standard-form">
+                <div class="form-group">
+                    <label for="settings-api-key">API Key (X-API-Key)</label>
+                    <input type="password" id="settings-api-key" placeholder="Enter API Access Key" value="dev-secret-key">
+                    <span class="help-text">Used to authorize requests against secure endpoints. Default is 'dev-secret-key'.</span>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary btn-block" id="save-settings-btn">Save Configurations</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast hidden" id="toast-notification">Notification message</div>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+</html>

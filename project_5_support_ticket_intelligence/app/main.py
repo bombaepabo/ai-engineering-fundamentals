@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api import health, tickets, knowledge, chat
 from app.config import settings
@@ -48,6 +49,9 @@ app.include_router(health.router)
 app.include_router(tickets.router)
 app.include_router(knowledge.router)
 app.include_router(chat.router)
+
+# Mount static UI files (must be registered after routers to avoid overtaking api paths)
+app.mount("/ui", StaticFiles(directory="app/ui", html=True), name="ui")
 
 
 @app.exception_handler(Exception)
